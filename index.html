@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="自動車販売店向けの車両利益計算機" />
+    <title>車両利益計算機</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="車両利益計算機">
+          <span class="brand-mark" aria-hidden="true">車</span>
+          <span><small>DEALER TOOL</small><strong>車両利益計算機</strong></span>
+        </a>
+        <span class="live-note"><i></i>入力すると自動計算</span>
+      </header>
+
+      <main id="top">
+        <section class="intro" aria-labelledby="title">
+          <p class="eyebrow">STOCK CAR MARGIN</p>
+          <h1 id="title">車両ごとの利益を、<em>すばやく確認。</em></h1>
+          <p>入力金額の税区分を選び、仕入れから販売までの利益を自動で計算します。</p>
+        </section>
+
+        <div class="tax-setting" aria-label="入力金額の税区分">
+          <div class="tax-setting-copy">
+            <strong>入力金額：<span id="tax-mode-label">税込</span></strong>
+            <small>消費税率 10%</small>
+          </div>
+          <div class="tax-toggle" role="tablist" aria-label="入力金額を税込・税別から選択">
+            <button id="tax-inclusive" class="tax-tab active" type="button" role="tab" aria-selected="true">税込</button>
+            <button id="tax-exclusive" class="tax-tab" type="button" role="tab" aria-selected="false">税別</button>
+          </div>
+        </div>
+
+        <div class="mode-switch" role="tablist" aria-label="計算モードを選択">
+          <button id="mode-price" class="mode-tab active" type="button" role="tab" aria-selected="true" aria-controls="profit-form">
+            <strong>① 販売価格を決める</strong>
+            <small>希望利益から必要な販売価格を逆算</small>
+          </button>
+          <button id="mode-profit" class="mode-tab" type="button" role="tab" aria-selected="false" aria-controls="profit-form">
+            <strong>② 利益を確認する</strong>
+            <small>予定販売価格から粗利益を確認</small>
+          </button>
+        </div>
+
+        <div class="app-grid">
+          <form id="profit-form" class="panel input-panel">
+            <div class="panel-heading">
+              <div><small>01 / INPUT</small><h2>車両情報と費用</h2></div>
+              <span class="unit-badge">金額は円</span>
+            </div>
+            <p class="hint">空欄は0円として計算されます。</p>
+
+            <div class="field vehicle-field">
+              <label for="car-name">車名 <span>任意</span></label>
+              <input id="car-name" type="text" placeholder="例：トヨタ プリウス" autocomplete="off" />
+            </div>
+
+            <div class="section-title"><span>仕入れ・経費</span><small>Cost</small></div>
+            <div class="field-grid">
+              <div class="field"><label for="purchase-price">仕入価格</label><div class="money-input"><input id="purchase-price" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+              <div class="field"><label for="auction-fee">オークション手数料</label><div class="money-input"><input id="auction-fee" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+              <div class="field"><label for="transport-cost">陸送費</label><div class="money-input"><input id="transport-cost" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+              <div class="field"><label for="maintenance-cost">整備・部品代</label><div class="money-input"><input id="maintenance-cost" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+              <div class="field wide"><label for="other-cost">その他経費</label><div class="money-input"><input id="other-cost" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+            </div>
+
+            <div class="section-title separate-fees-title"><span>諸費用（原価に含めない）</span><small>Customer fees</small></div>
+            <p class="section-note">支払総額にだけ加算され、粗利益・粗利率には含めません。</p>
+            <div class="field-grid separate-fees-grid">
+              <div class="field"><label for="self-liability">自賠責</label><div class="money-input"><input id="self-liability" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+              <div class="field"><label for="weight-tax">重量税</label><div class="money-input"><input id="weight-tax" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+              <div class="field"><label for="stamp-duty">印紙</label><div class="money-input"><input id="stamp-duty" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+              <div class="field"><label for="plate-fee">プレート代</label><div class="money-input"><input id="plate-fee" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+              <div class="field wide"><label for="recycle-fee">リサイクル費用</label><div class="money-input"><input id="recycle-fee" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+            </div>
+
+            <div class="section-title sales-title"><span id="sales-section-label">目標条件</span><small id="sales-section-caption">Target</small></div>
+            <div class="field-grid sales-grid">
+              <div id="sale-field" class="field emphasis is-hidden"><label for="sale-price">予定販売価格</label><div class="money-input"><input id="sale-price" type="number" min="0" step="1" inputmode="numeric" placeholder="0" disabled /><span>円</span></div></div>
+              <div id="desired-field" class="field target"><label for="desired-profit">希望利益</label><div class="money-input"><input id="desired-profit" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
+            </div>
+
+            <div class="form-footer">
+              <button id="calculate-button" type="submit"><span id="calculate-label">販売価格を計算</span><b aria-hidden="true">→</b></button>
+              <span>入力内容はこの端末内だけで計算されます。</span>
+            </div>
+          </form>
+
+          <section class="panel result-panel" aria-labelledby="result-title" aria-live="polite">
+            <div class="panel-heading result-heading">
+              <div><small>02 / RESULT</small><h2 id="result-title">計算結果</h2></div>
+              <span id="result-car-name" class="car-tag">車名未入力</span>
+            </div>
+
+            <div class="result-grid">
+              <article><div><strong>総原価</strong><small>仕入れ＋原価経費</small></div><b id="total-cost">¥0</b></article>
+              <article id="second-result-card" class="profit"><div><strong id="second-result-label">希望利益</strong><small id="second-result-caption">入力した目標</small></div><b id="second-result-value">¥0</b></article>
+              <article id="third-result-card" class="margin is-hidden"><div><strong id="third-result-label">粗利率</strong><small id="third-result-caption">粗利益÷販売価格</small></div><b id="third-result-value">—</b></article>
+              <article class="fees"><div><strong>諸費用合計</strong><small>原価に含めない</small></div><b id="separate-fee-total">¥0</b></article>
+            </div>
+
+            <div id="target-card" class="target-card">
+              <div class="target-icon" aria-hidden="true">↗</div>
+              <div><strong id="target-label">希望利益を確保するために必要な販売価格</strong><small id="target-description">総原価に希望利益を加えた目安です。</small></div>
+              <b id="required-sale-price">¥0</b>
+            </div>
+
+            <div class="tax-breakdown">
+              <div class="tax-breakdown-heading">
+                <div><strong>金額内訳</strong><small>税率10%・計算は税別基準</small></div>
+                <span id="tax-basis-badge">入力：税込</span>
+              </div>
+              <div class="tax-table">
+                <div class="tax-table-row tax-table-head"><span></span><span>税別金額</span><span>消費税額</span><span>税込金額</span></div>
+                <div class="tax-table-row"><strong>総原価</strong><b id="cost-tax-net">¥0</b><b id="cost-tax-amount">¥0</b><b id="cost-tax-gross">¥0</b></div>
+                <div class="tax-table-row tax-table-result"><strong id="tax-breakdown-label">必要販売価格</strong><b id="tax-net">¥0</b><b id="tax-amount">¥0</b><b id="tax-gross">¥0</b></div>
+                <div class="tax-table-row"><strong>諸費用合計</strong><b id="fee-tax-net">¥0</b><b id="fee-tax-amount">¥0</b><b id="fee-tax-gross">¥0</b></div>
+                <div class="tax-table-row tax-table-total"><strong>支払総額（税込）</strong><b id="payment-tax-net">¥0</b><b id="payment-tax-amount">¥0</b><b id="payment-tax-gross">¥0</b></div>
+              </div>
+            </div>
+
+            <div class="payment-total-card">
+              <div><small>お客様の支払総額（税込）</small><strong id="payment-total-description">必要販売価格＋諸費用合計</strong><span>入力金額の税区分に応じて、一度だけ税込金額にそろえて合算します。</span></div>
+              <b id="payment-total">¥0</b>
+            </div>
+            <p id="calculation-status" class="status">販売価格を入力すると粗利率を計算します。</p>
+          </section>
+        </div>
+      </main>
+
+      <footer>Vehicle Profit Calculator <span>•</span> 自動車販売店向け</footer>
+    </div>
+  </body>
+</html>
