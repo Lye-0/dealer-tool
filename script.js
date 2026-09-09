@@ -88,24 +88,37 @@ function updateTaxRow(netValue, netOutput, taxOutput, grossOutput) {
   grossOutput.textContent = yen(parts.gross);
 }
 
-function updateTaxBreakdown(totalNet, resultNet, separateFeesNet, paymentNet, label) {
+function updateFeeRow(feeAmount, netOutput, taxOutput, grossOutput) {
+  netOutput.textContent = yen(feeAmount);
+  taxOutput.textContent = "—";
+  grossOutput.textContent = yen(feeAmount);
+}
+
+function updatePaymentRow(saleNet, feeAmount, netOutput, taxOutput, grossOutput) {
+  const saleParts = taxParts(saleNet);
+  netOutput.textContent = yen(saleParts.net + feeAmount);
+  taxOutput.textContent = yen(saleParts.tax);
+  grossOutput.textContent = yen(saleParts.gross + feeAmount);
+}
+
+function updateTaxBreakdown(totalNet, resultNet, separateFees, label) {
   output.taxBreakdownLabel.textContent = label;
   updateTaxRow(totalNet, output.costTaxNet, output.costTaxAmount, output.costTaxGross);
   updateTaxRow(resultNet, output.taxNet, output.taxAmount, output.taxGross);
-  updateTaxRow(separateFeesNet, output.feeTaxNet, output.feeTaxAmount, output.feeTaxGross);
-  updateTaxRow(paymentNet, output.paymentTaxNet, output.paymentTaxAmount, output.paymentTaxGross);
+  updateFeeRow(separateFees, output.feeTaxNet, output.feeTaxAmount, output.feeTaxGross);
+  updatePaymentRow(resultNet, separateFees, output.paymentTaxNet, output.paymentTaxAmount, output.paymentTaxGross);
 }
 
 function calculate() {
   const total = costIds
     .reduce((sum, id) => sum + inputToNet(id), 0);
   const separateFees = separateFeeIds
-    .reduce((sum, id) => sum + inputToNet(id), 0);
+    .reduce((sum, id) => sum + amount(id), 0);
   const name = carName.value.trim();
 
   output.carName.textContent = name || "車名未入力";
   output.total.textContent = yen(netToInputBasis(total));
-  output.separateFeeTotal.textContent = yen(netToInputBasis(separateFees));
+  output.separateFeeTotal.textContent = yen(separateFees);
 
   if (currentMode === "price") {
     const desired = inputToNet("desired-profit");
@@ -119,9 +132,9 @@ function calculate() {
     output.targetLabel.textContent = "希望利益を確保するために必要な販売価格";
     output.targetDescription.textContent = "総原価に希望利益を加えた目安です。";
     output.target.textContent = yen(netToInputBasis(requiredSale));
-    updateTaxBreakdown(total, requiredSale, separateFees, requiredSale + separateFees, "必要販売価格");
+    updateTaxBreakdown(total, requiredSale, separateFees, "必要販売価格");
     output.paymentTotalDescription.textContent = "必要販売価格＋諸費用合計";
-    output.paymentTotal.textContent = yen(taxParts(requiredSale + separateFees).gross);
+    output.paymentTotal.textContent = yen(netToInputBasis(requiredSale) + separateFees);
     output.status.textContent = `${name || "この車両"}の必要販売価格を計算しています。`;
   } else {
     const sale = inputToNet("sale-price");
@@ -136,9 +149,9 @@ function calculate() {
     output.thirdValue.textContent = Number.isFinite(margin) ? `${margin.toFixed(1)}%` : "—";
     thirdResultCard.classList.remove("is-hidden");
     targetCard.classList.add("is-hidden");
-    updateTaxBreakdown(total, sale, separateFees, sale + separateFees, "予定販売価格");
+    updateTaxBreakdown(total, sale, separateFees, "予定販売価格");
     output.paymentTotalDescription.textContent = "予定販売価格＋諸費用合計";
-    output.paymentTotal.textContent = yen(taxParts(sale + separateFees).gross);
+    output.paymentTotal.textContent = yen(netToInputBasis(sale) + separateFees);
     output.status.textContent = sale > 0
       ? `${name || "この車両"}の粗利益と粗利率を計算しています。`
       : "予定販売価格を入力すると粗利益と粗利率を計算します。";

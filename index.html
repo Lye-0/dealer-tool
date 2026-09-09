@@ -70,7 +70,7 @@
             </div>
 
             <div class="section-title separate-fees-title"><span>諸費用（原価に含めない）</span><small>Customer fees</small></div>
-            <p class="section-note">支払総額にだけ加算され、粗利益・粗利率には含めません。</p>
+            <p class="section-note">支払総額にだけ加算し、粗利益・粗利率・消費税の計算対象には含めません。</p>
             <div class="field-grid separate-fees-grid">
               <div class="field"><label for="self-liability">自賠責</label><div class="money-input"><input id="self-liability" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
               <div class="field"><label for="weight-tax">重量税</label><div class="money-input"><input id="weight-tax" type="number" min="0" step="1" inputmode="numeric" placeholder="0" /><span>円</span></div></div>
@@ -112,20 +112,20 @@
 
             <div class="tax-breakdown">
               <div class="tax-breakdown-heading">
-                <div><strong>金額内訳</strong><small>税率10%・計算は税別基準</small></div>
+                <div><strong>金額内訳</strong><small>販売価格等は税率10%・法定費用は対象外</small></div>
                 <span id="tax-basis-badge">入力：税込</span>
               </div>
               <div class="tax-table">
                 <div class="tax-table-row tax-table-head"><span></span><span>税別金額</span><span>消費税額</span><span>税込金額</span></div>
                 <div class="tax-table-row"><strong>総原価</strong><b id="cost-tax-net">¥0</b><b id="cost-tax-amount">¥0</b><b id="cost-tax-gross">¥0</b></div>
                 <div class="tax-table-row tax-table-result"><strong id="tax-breakdown-label">必要販売価格</strong><b id="tax-net">¥0</b><b id="tax-amount">¥0</b><b id="tax-gross">¥0</b></div>
-                <div class="tax-table-row"><strong>諸費用合計</strong><b id="fee-tax-net">¥0</b><b id="fee-tax-amount">¥0</b><b id="fee-tax-gross">¥0</b></div>
+                <div class="tax-table-row"><strong>諸費用合計（対象外）</strong><b id="fee-tax-net">¥0</b><b id="fee-tax-amount">¥0</b><b id="fee-tax-gross">¥0</b></div>
                 <div class="tax-table-row tax-table-total"><strong>支払総額（税込）</strong><b id="payment-tax-net">¥0</b><b id="payment-tax-amount">¥0</b><b id="payment-tax-gross">¥0</b></div>
               </div>
             </div>
 
             <div class="payment-total-card">
-              <div><small>お客様の支払総額（税込）</small><strong id="payment-total-description">必要販売価格＋諸費用合計</strong><span>入力金額の税区分に応じて、一度だけ税込金額にそろえて合算します。</span></div>
+              <div><small>お客様の支払総額（税込）</small><strong id="payment-total-description">必要販売価格＋諸費用合計</strong><span>販売価格だけを税込にそろえ、法定費用は入力額をそのまま加算します。</span></div>
               <b id="payment-total">¥0</b>
             </div>
             <p id="calculation-status" class="status">販売価格を入力すると粗利率を計算します。</p>
